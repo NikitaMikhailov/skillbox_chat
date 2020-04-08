@@ -18,13 +18,13 @@ class Person:
         self.last_name = last_name
         self.age = age
 
-    def info(self):
-        print(f"{self.first_name} {self.last_name}, age: {self.age}")
+    def print_info(self):
+        print(f"{self.first_name} {self.last_name}, {self.age}")
 
     def say(self, content):
-        print(f"<{self.first_name}>: {content}")
+        print(f"<{self.first_name} {self.last_name}>: {content}")
 
 
-user = Person("John", "Doe", 30)
-user.info()
+user = Person("Nikita", "Mikhailov", 23)
+user.print_info()
 user.say("Hello")

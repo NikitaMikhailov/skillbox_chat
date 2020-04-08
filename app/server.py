@@ -14,42 +14,69 @@ class ServerProtocol(asyncio.Protocol):
         self.server = server
 
     def data_received(self, data: bytes):
-        print(data)
-
-        decoded = data.decode()
+        decoded = data.decode(encoding="utf-8", errors="ignore")
 
         if self.login is not None:
-            self.send_message(decoded)
+            self.send_message(decoded.replace("\r\n", ""))
         else:
             if decoded.startswith("login:"):
                 self.login = decoded.replace("login:", "").replace("\r\n", "")
+                for user in self.server.clients:
+                    if user.login == self.login and user != self:
+                        self.transport.write(
+                            f"Логин {self.login} занят, попробуйте другой".encode(encoding="utf-8", errors="ignore")
+                        )
+                        # Login <{self.login}> is busy, try another one..
+                        print(f"<{self.login}> this is an invalid username")
+                        self.transport.close()
+
                 self.transport.write(
-                    f"Привет, {self.login}!\n".encode()
+                    f"Hello, {self.login}!\n".encode(encoding="utf-8", errors="ignore")
                 )
+
+                self.send_history()
+
             else:
-                self.transport.write("Неправильный логин\n".encode())
+                self.transport.write("Command format for the first message login:LOGIN\n".
+                                     encode(encoding="utf-8", errors="ignore"))
 
     def connection_made(self, transport: transports.Transport):
         self.server.clients.append(self)
         self.transport = transport
-        print("Пришел новый клиент")
+        print("Connection with a new client is established")
 
     def connection_lost(self, exception):
         self.server.clients.remove(self)
-        print("Клиент вышел")
+        print(f"The client {self.login} disconnected")
 
     def send_message(self, content: str):
         message = f"{self.login}: {content}\n"
 
+        self.write_history(message)
+
         for user in self.server.clients:
-            user.transport.write(message.encode())
+            user.transport.write(message.encode(encoding="utf-8", errors="ignore"))
+
+    def send_history(self):
+        if len(self.server.history) > 0:
+            self.transport.write(f"Last messages >>>\n{''.join(self.server.history)}".
+                                 encode(encoding="utf-8", errors="ignore"))
+
+    def write_history(self, message: str):
+        if len(self.server.history) < 10:
+            self.server.history.append(message)
+        else:
+            self.server.history.append(message)
+            self.server.history.pop(0)
 
 
 class Server:
     clients: list
+    history: list
 
     def __init__(self):
         self.clients = []
+        self.history = []
 
     def build_protocol(self):
         return ServerProtocol(self)
@@ -63,7 +90,7 @@ class Server:
             8888
         )
 
-        print("Сервер запущен ...")
+        print("The server is running...")
 
         await coroutine.serve_forever()
 
@@ -73,4 +100,5 @@ process = Server()
 try:
     asyncio.run(process.start())
 except KeyboardInterrupt:
-    print("Сервер остановлен вручную")
+    print("The server was stopped manually")
+    sys.exit(0)

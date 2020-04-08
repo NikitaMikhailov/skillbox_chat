@@ -8,16 +8,13 @@
 Сделать
 - функцию, которая вернет размер зарплаты в руб
 """
-
-
-def salary(hour_cost: int, day_quantity: int):
-    total = (hour_cost * 8) * day_quantity
-    final = total - (total * .13)
-
+def salary_func(hour_cost: int, day_quantity: int):
+    final = 0.87 * (hour_cost * 8) * day_quantity
     return final
 
+hour_cost = int(input("Укажите стоимость часа >>> "))
+day_quantity = int(input("Укажите количество дней >>> "))
 
-a = salary(100, 1)
-b = salary(100, 2)
+print(salary_func(hour_cost, day_quantity))
 
-print(a, b)
+

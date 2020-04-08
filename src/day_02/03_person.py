@@ -15,8 +15,8 @@ class Person:
 
 
 user = Person()
-user.first_name = "John"
-user.last_name = "Doe"
-user.age = 30
+user.first_name = "Nikita"
+user.last_name = "Mikhailov"
+user.age = 23
 
-print(user.first_name, user.last_name, user.age)
+print(user.first_name, user.last_name, user.age, sep="\n")

@@ -18,11 +18,11 @@ class Person:
         self.last_name = last_name
         self.age = age
 
-    def info(self):
-        print(f"{self.first_name} {self.last_name}, age: {self.age}")
+    def print_info(self):
+        print(f"{self.first_name} {self.last_name}, {self.age}")
 
     def say(self, content):
-        print(f"<{self.first_name}>: {content}")
+        print(f"<{self.first_name} {self.last_name}>: {content}")
 
 
 class User(Person):
@@ -32,10 +32,9 @@ class User(Person):
         return self.password == user_password
 
 
-user = User("John", "Doe", 30)
-user.info()
+user = User("Nikita", "Mikhailov", 23)
+user.print_info()
 user.say("Hello")
 
-user.password = "123123"
-print(user.check_password("456456"))
-print(user.check_password("123123"))
+user.password = "123456"
+print(user.check_password("123456"))

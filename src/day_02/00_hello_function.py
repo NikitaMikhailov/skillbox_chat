@@ -5,17 +5,13 @@
 - функцию hello, которая выводит текст приветствия клиенту
 """
 
-
-def user_hello(user: str):
-    print(f"Hello, {user}")
-
+def hello_clients(clients: list):
+    for user in clients:
+        print(f"Hello, {user}")
 
 clients = ['John', 'David', 'Kate', 'Alex']
+hello_clients(clients)
 
-for user in clients:
-    user_hello(user)
+clients_two = ['Nikita']
+hello_clients(clients_two)
 
-clients_two = ['Edward']
-
-for user in clients_two:
-    user_hello(user)
